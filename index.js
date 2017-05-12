@@ -8,6 +8,7 @@ var path = require('path');
 var pathurl = require('url');
 var ejs = require('ejs');
 var mime = require('mime');
+var is = require('electron-is');
 
 //Main function
 function ElectronEjs(options)
@@ -19,7 +20,14 @@ function ElectronEjs(options)
   app.on('ready', function(){
 
     //Import protocol
-    var protocol = require('protocol');
+    var protocol = electron.protocol;
+    if(!protocol){
+      try {
+          protocol = require('protocol');
+      } catch(e){
+        // ignore
+      }
+    }
 
     //Intercept the file protocol
     protocol.interceptBufferProtocol('file', function(request, callback){
@@ -40,7 +48,7 @@ function ElectronEjs(options)
         options.filename = file;
 
         //Get the full file
-        var full = ejs.render(content, options)
+        var full = ejs.render(content, options);
         /***
          * Set a conf object in your electron main file
          * The conf object contains a layoutViewPath and a layoutFile fields
@@ -75,6 +83,8 @@ function ParsePath(url)
   var p = pathurl.parse(url);
 
   //Return the path name
+
+  if(is.windows() && p.pathname.indexOf('/') === 0) return p.pathname.substr(1);
   return p.pathname;
 }
 

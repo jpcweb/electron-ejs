@@ -27,8 +27,46 @@ conf = {
 conf.layoutFile = 'layout.ejs';
 mainWindow.loadURL('file://'+__dirname+'/views/main/main.ejs');
 ```
-
 Where `locals` is an object where each key is used as a variable in your template.
+
+In layout.ejs:
+```ejs
+<html>
+    <head>My Page</head>
+    <body>
+        <h1>This is part of the layout</h1>
+        <div id='container-body'>
+            <%- body %>
+        </div>
+        <p>
+            My Footer
+        </p>
+    </body>
+</html>
+
+
+```
+
+In main.ejs:
+```ejs
+<h2>This is not part of the layout</h2>
+```
+
+Generates:
+```html
+<html>
+    <head>My Page</head>
+    <body>
+        <h1>This is part of the layout</h1>
+        <div id='container-body'>
+            <h2>This is not part of the layout</h2>
+        </div>
+        <p>
+            My Footer
+        </p>
+    </body>
+</html>
+```
 
 
 ## Issues
